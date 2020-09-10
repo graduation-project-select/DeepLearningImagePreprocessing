@@ -18,4 +18,6 @@ https://www.notion.so/Augmentation-a28b225f02914c598b22f68ca0621e73#be5690798739
 2) 얼굴을 감지한 경우 얼굴 rect의 밑변을 기준으로 위쪽을 제거(crop)<br>
 -> 얼굴 제거 후 training시 loss 감소<br>
 
-
+# poseEstimation
+참고: 
+https://m.blog.naver.com/rhrkdfus/221531159811
