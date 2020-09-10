@@ -18,35 +18,8 @@ POSE_PAIRS = [["Head", "Neck"], ["Neck", "RShoulder"], ["RShoulder", "RElbow"],
 protoFile = "./pose_deploy_linevec_faster_4_stages.prototxt"
 weightsFile = "./pose_iter_160000.caffemodel"
 
-# 위의 path에 있는 network 불러오기
-net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
-# 이미지 읽어오기
-filePath = "./poseExample/"
-fileName = "62441.jpg"
-image = cv2.imread(filePath+fileName)
-
-# frame.shape = 불러온 이미지에서 height, width, color 받아옴
-imageHeight, imageWidth, _ = image.shape
-
-# network에 넣기위해 전처리
-inpBlob = cv2.dnn.blobFromImage(image, 1.0 / 255, (imageWidth, imageHeight), (0, 0, 0), swapRB=False, crop=False)
-
-# network에 넣어주기
-net.setInput(inpBlob)
-
-# 결과 받아오기
-output = net.forward()
-
-# output.shape[0] = 이미지 ID, [1] = 출력 맵의 높이, [2] = 너비
-H = output.shape[2]
-W = output.shape[3]
-print("이미지 ID : ", len(output[0]), ", H : ", output.shape[2], ", W : ", output.shape[3])  # 이미지 ID
-
-# 키포인트 검출시 이미지에 그려줌
-points = []
-
-def findX1(output):
+def findX1(output, W, imageWidth):
     x1 = -1
     # 2,3,4 중 가장 작은
     for i in range(2,5):
@@ -59,11 +32,11 @@ def findX1(output):
         if prob > 0.1:
           if x1 == -1 or (x != -1 and x < x1):
               x1 = x
-        else:
-            print(str(i)+" is 'else'")
+        # else:
+        #     print(str(i)+" is 'else'")
     return x1
 
-def findX2(output):
+def findX2(output, W, imageWidth):
     x2 = -1
     # 5,6,7 중 가장 큰 값
     for i in range(5,8):
@@ -76,11 +49,11 @@ def findX2(output):
         if prob > 0.1:
           if x2 == -1 or (x != -1 and x > x2):
               x2 = x
-        else:
-            print(str(i)+" is 'else'")
+        # else:
+        #     print(str(i)+" is 'else'")
     return x2
 
-def findY1(output):
+def findY1(output, H, imageHeight):
     y1 = -1
     probMap = output[0, 1, :, :] # 목부분
     # global 최대값 찾기
@@ -94,7 +67,7 @@ def findY1(output):
     #     print("1 is 'else'")
     return y1
 
-def findY2(output):
+def findY2(output, H, imageHeight):
     # 10,13 중 더 큰 값
     y2 = -1
     probMap10 = output[0, 10, :, :]
@@ -113,30 +86,31 @@ def findY2(output):
         y2 = y10
     return y2
 
-x1 = findX1(output)
-x2 = findX2(output)
-y1 = findY1(output)
-y2 = findY2(output)
-print("x1:"+str(findX1(output)))
-print("x2:"+str(findX2(output)))
-print("y1:"+str(findY1(output)))
-print("y2:"+str(findY2(output)))
+def detectFullbody(image, output, imageWidth, imageHeight):
+    H = output.shape[2]
+    W = output.shape[3]
 
-if x1 != -1 and x2 != -1 and y1 != -1 and y2 != -1:
-    alpha = 2
-    if int(y1) - alpha > 0:
-        y1 = int(y1) - alpha
-    if int(x1) - alpha > 0:
-        x1 = int(x1) - alpha
-    if int(y2) + alpha < imageHeight:
-        y2 = int(y2) + alpha
-    if int(x2) + alpha < imageWidth:
-        x2 = int(x2) + alpha
+    x1 = findX1(output, W, imageWidth)
+    x2 = findX2(output, W, imageWidth)
+    y1 = findY1(output, H, imageHeight)
+    y2 = findY2(output, H, imageHeight)
+    print("x1:" + str(x1) + ", x2: " + str(x2) + ", y1: " + str(y1) + ", y2: " + str(y2))
 
-    cropped_img = image[int(y1): int(y2), int(x1): int(x2)]
-    cv2.imshow("cropped_img", cropped_img)
-    cv2.imwrite(filePath+"cropped_full/"+fileName, cropped_img)
+    if x1 != -1 and x2 != -1 and y1 != -1 and y2 != -1:
+        alpha = 2
+        if int(y1) - alpha > 0:
+            y1 = int(y1) - alpha
+        if int(x1) - alpha > 0:
+            x1 = int(x1) - alpha
+        if int(y2) + alpha < imageHeight:
+            y2 = int(y2) + alpha
+        if int(x2) + alpha < imageWidth:
+            x2 = int(x2) + alpha
 
-    cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (255,0,0), thickness=1)
-    cv2.imshow("Output-Keypoints", image)
-    cv2.waitKey(0)
+        cropped_img = image[int(y1): int(y2), int(x1): int(x2)]
+        # cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), thickness=1)
+        # cv2.imshow("Output-Keypoints", image)
+        # cv2.waitKey(0)
+        return cropped_img
+    else:
+        return []
