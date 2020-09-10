@@ -131,7 +131,7 @@ if x1 != -1 and x2 != -1 and y1 != -1 and y2 != -1:
 
     cropped_img = image[int(y1): int(y2), int(x1): int(x2)]
     cv2.imshow("cropped_img", cropped_img)
-    cv2.imwrite(filePath+"cropped/"+fileName, cropped_img)
+    cv2.imwrite(filePath+"cropped_ub/"+fileName, cropped_img)
 
     cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (255,0,0), thickness=1)
     cv2.imshow("Output-Keypoints", image)
