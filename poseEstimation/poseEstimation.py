@@ -22,7 +22,7 @@ weightsFile = "./pose_iter_160000.caffemodel"
 net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
 # 이미지 읽어오기
-image = cv2.imread("./poseExample/2652.jpg")
+image = cv2.imread("./poseExample/8017.jpg")
 
 # frame.shape = 불러온 이미지에서 height, width, color 받아옴
 imageHeight, imageWidth, _ = image.shape

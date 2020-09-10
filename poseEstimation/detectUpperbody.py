@@ -23,7 +23,7 @@ net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
 # 이미지 읽어오기
 filePath = "./poseExample/"
-fileName = "67704.jpg"
+fileName = "1005.jpg"
 image = cv2.imread(filePath+fileName)
 
 # frame.shape = 불러온 이미지에서 height, width, color 받아옴
@@ -124,9 +124,9 @@ if x1 != -1 and x2 != -1 and y1 != -1 and y2 != -1:
         y1 = int(y1) - alpha
     if int(x1) - alpha > 0:
         x1 = int(x1) - alpha
-    if int(y2) + alpha < H:
+    if int(y2) + alpha < imageHeight:
         y2 = int(y2) + alpha
-    if int(x2) + alpha < W:
+    if int(x2) + alpha < imageWidth:
         x2 = int(x2) + alpha
 
     cropped_img = image[int(y1): int(y2), int(x1): int(x2)]
