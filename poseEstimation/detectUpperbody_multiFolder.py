@@ -11,7 +11,7 @@ weightsFile = "./pose_iter_160000.caffemodel"
 # 위의 path에 있는 network 불러오기
 net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
-root_dir = "./texture_crop"
+root_dir = "./data"
 root_file_list = os.listdir(root_dir)
 for folderName in root_file_list:
     path_dir = root_dir + "/" + folderName
@@ -27,9 +27,9 @@ for folderName in root_file_list:
     cropped_img_path_lb = path_dir + "/cropped_lb"
     if not os.path.isdir(cropped_img_path_lb):
         os.mkdir(cropped_img_path_lb)
-    cropped_img_path_fb = path_dir + "/cropped_fb"
-    if not os.path.isdir(cropped_img_path_fb):
-        os.mkdir(cropped_img_path_fb)
+    # cropped_img_path_fb = path_dir + "/cropped_fb"
+    # if not os.path.isdir(cropped_img_path_fb):
+    #     os.mkdir(cropped_img_path_fb)
 
     for fileName in file_list:
         image_path = path_dir+"/"+fileName

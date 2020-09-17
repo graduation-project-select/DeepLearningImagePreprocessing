@@ -2,3 +2,6 @@ poseExample
 pose_deploy_linevec_faster_4_stages.prototxt
 pose_iter_160000.caffemodel
 texture_crop
+data
+fabric_crawling
+__pycache__
