@@ -4,7 +4,6 @@ from PIL import Image
 input_dir = "input_images"
 output_dir = "output_images"
 
-
 def composite(cate, files):
     for el in files:
         splt = el.split(".")
@@ -20,9 +19,16 @@ def composite(cate, files):
                 new_size = y
                 x_offset = int((y - x) / 2)
                 y_offset = 0
+            elif x == y:
+                continue
 
-            # background_color = "white"  #white, black, blue, red, ...
-            new_image = Image.new("RGBA", (new_size, new_size), (255, 0, 0, 0))
+            background_color = "white"  #white, black, blue, red, ...
+            if image.mode == "RGBA":
+                new_image = Image.new("RGBA", (new_size, new_size), (255, 255, 255, 0))
+            elif image.mode == "RGB":
+                new_image = Image.new("RGBA", (new_size, new_size), background_color)
+
+            # new_image = Image.new("RGBA", (new_size, new_size), (234, 233, 231, 255))
             new_image.paste(image, (x_offset, y_offset))
 
             outfile_name = ".".join(splt) + ".png"
